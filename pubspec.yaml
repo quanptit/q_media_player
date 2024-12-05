@@ -10,6 +10,7 @@ environment:
 dependencies:
   q_common_utils:
     path: ../q_common_utils
+  just_audio: ^0.9.42
   flutter:
     sdk: flutter
 

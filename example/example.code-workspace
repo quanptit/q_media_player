@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../q_ads_fb"
+		},
+		{
+			"path": "../q_ads_max"
+		},
+		{
+			"path": "../q_ads_mediation"
+		}
+	],
+	"settings": {}
+}
