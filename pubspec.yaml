@@ -1,0 +1,26 @@
+name: q_media_player
+version: 0.0.1
+description: "Wrapper MediaPlayer"
+publish_to: 'none'
+homepage: https://github.com/quanptit/q_media_player  # Optional but recommended
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  q_common_utils:
+    path: ../q_common_utils
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: any
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+  uses-material-design: true
