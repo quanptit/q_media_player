@@ -61,6 +61,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   var url = "https://f002.backblazeb2.com/file/learnlanguage/data/sound/win.mp3";
   QAudioPlayer player = QAudioPlayer();
+  QAudioPlayer player1 = QAudioPlayer();
+  QAudioPlayer playerBtnTap = QAudioPlayer();
+
+  @override
+  void initState() {
+    super.initState();
+    playerBtnTap.setSource(QPlayerSource(assetPath: "assets/sfx/click_correct.mp3"));
+    // playerBtnTap.getPlayer().load();
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -84,23 +94,31 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(url),
+            FilledButton(onPressed: () async {
+              playerBtnTap.setSource(QPlayerSource(assetPath: "assets/sfx/click_correct.mp3"));
+              playerBtnTap.play();
+            }, child: const Text('Play Btn Tap Asset')),
             FilledButton(
-                onPressed: () {
+                onPressed: () async {
                   L.d("Play Click");
-                  player.playUrl(url);
+                  await player.setSource(QPlayerSource(url: url));
+                  await player.play();
                 },
                 child: const Text('Play Win audio')),
             FilledButton(
                 onPressed: () {
-                  L.d("Play Click");
-                  player.playUrl("https://f002.backblazeb2.com/file/learnlanguage/data/sound/gameover1.mp3");
+                  var url1 = "https://f002.backblazeb2.com/file/learnlanguage/data/sound/gameover.mp3";
+                  player1.setSource(QPlayerSource(url: url));
+                  player1.play();
                 },
                 child: const Text('Play GameOver audio')),
             FilledButton(
                 onPressed: () {
-                  RouteUtils.push(context: context, screen: Column(children: [
-                    Text("New Screen")
-                  ],));
+                  RouteUtils.push(
+                      context: context,
+                      screen: Column(
+                        children: [Text("New Screen")],
+                      ));
                 },
                 child: const Text('New Screen')),
           ],
@@ -109,4 +127,3 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
