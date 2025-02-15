@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:q_common_utils/l.dart';
-import 'package:q_common_utils/route_utils.dart';
+import 'package:q_common_utils/index.dart';
 import 'package:q_media_player/q_media_player.dart';
 
 void main() {

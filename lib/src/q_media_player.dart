@@ -2,17 +2,42 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:q_common_utils/l.dart';
+import 'package:q_common_utils/index.dart';
 
 enum QPlayerState { completed, error, idle, playing, paused, preparing, prepareComplete }
 
 class QPlayerSource {
   String? url, filePath, assetPath;
+
   QPlayerSource({this.url, this.filePath, this.assetPath});
 
+  factory QPlayerSource.create(Uri uri) {
+    if (CommonUtils.uriIsAssets(uri)) {
+      return QPlayerSource(assetPath: uri.toString());
+    }
+    if (CommonUtils.uriIsFile(uri)) {
+      return QPlayerSource(filePath: uri.toString());
+    }
+    if (CommonUtils.uriIsUrl(uri)) {
+      return QPlayerSource(url: uri.toString());
+    }
+    throw UnimplementedError("Error URI: $uri");
+  }
+
+  AudioSource getAudioSouce(){
+    if (qPlayerSource.url != null) {
+      return AudioSource.uri(Uri.parse(url));
+    } else if (qPlayerSource.filePath != null) {
+      return AudioSource.file(qPlayerSource.filePath!);
+    } else if (qPlayerSource.assetPath != null) {
+      return AudioSource.asset(qPlayerSource.assetPath!);
+    }
+    throw UnsupportedError("url ?? filePath ?? assetPath NULL ALL");
+  }
   @override
   String toString() {
-    return this.url ?? filePath ?? assetPath ?? "";
+    // String type = this.url != null ? "url" : (this.filePath != null ? "file" : "asset");
+    return (url ?? filePath ?? assetPath ?? "");
   }
 }
 
@@ -38,10 +63,7 @@ class QAudioPlayer {
     _player = AudioPlayer();
     _onPlayerStateChangedSubscription = _player.playerStateStream.listen((playerState) async {
       final playing = playerState.playing;
-      L.d("playerStateStream: playing: " +
-          playing.toString() +
-          ", processingState:" +
-          playerState.processingState.toString());
+      // L.d("playerStateStream: playing: $playing, processingState ${playerState.processingState}");
       switch (playerState.processingState) {
         case ProcessingState.idle:
           setPlayerState(QPlayerState.idle);
@@ -80,7 +102,7 @@ class QAudioPlayer {
   }
 
   setPlayerState(QPlayerState s) {
-    L.d("setPlayerState: " + s.toString());
+    // L.d("setPlayerState: $s");
     if ((_state == QPlayerState.error &&
             s == QPlayerState.idle) || // Đang error, mà nhận được thiết lập stop ==> bỏ qua, ko thay đổi state
         (_state == QPlayerState.playing && s == QPlayerState.prepareComplete)) {
@@ -88,13 +110,14 @@ class QAudioPlayer {
     }
 
     if (_state != s) {
-      L.d("change state: " + s.toString());
+      L.d("change state: $s");
       _state = s;
       onPlayerStateChanged?.call(_state);
     }
   }
-
+  QPlayerSource? currentSource;
   Future<Duration?> setSource(QPlayerSource qPlayerSource, {bool preload = true}) async {
+    currentSource = qPlayerSource;
     if (_currentSourcePath != null && qPlayerSource.toString() == _currentSourcePath) {
       if (_state == QPlayerState.error || _state == QPlayerState.idle) {
         await _releaseAndInitAgain();
@@ -105,7 +128,7 @@ class QAudioPlayer {
       }
     }
     try {
-      L.d("setSource: " + qPlayerSource.toString());
+      L.d("setSource: ${qPlayerSource.toString()}");
       setPlayerState(QPlayerState.idle);
       _currentSourcePath = qPlayerSource.toString();
 
