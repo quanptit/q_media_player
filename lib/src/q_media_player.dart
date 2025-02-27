@@ -25,12 +25,12 @@ class QPlayerSource {
   }
 
   AudioSource getAudioSouce(){
-    if (qPlayerSource.url != null) {
-      return AudioSource.uri(Uri.parse(url));
-    } else if (qPlayerSource.filePath != null) {
-      return AudioSource.file(qPlayerSource.filePath!);
-    } else if (qPlayerSource.assetPath != null) {
-      return AudioSource.asset(qPlayerSource.assetPath!);
+    if (url != null) {
+      return AudioSource.uri(Uri.parse(url!));
+    } else if (filePath != null) {
+      return AudioSource.file(filePath!);
+    } else if (assetPath != null) {
+      return AudioSource.asset(assetPath!);
     }
     throw UnsupportedError("url ?? filePath ?? assetPath NULL ALL");
   }
